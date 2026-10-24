@@ -1,75 +1,37 @@
--- phpMyAdmin SQL Dump
--- version 5.1.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1
--- Generation Time: Jan 25, 2022 at 07:03 PM
--- Server version: 10.4.22-MariaDB
--- PHP Version: 8.0.13
+-- Student / Employee ID Card Generator in PHP
+-- Database: `id_card` | Core PHP + MySQL
+-- Updated clean schema (2026): same database, table and column names as the
+-- original version, so existing installs keep working.
+-- Changes vs the old dump:
+--   * InnoDB + utf8mb4 (the old MyISAM + latin1 could not store many Indian /
+--     international names correctly and had no transaction safety)
+--   * Primary key + AUTO_INCREMENT declared in CREATE TABLE (the old dump
+--     relied on later ALTER statements)
+--   * `dob` and `exp_date` are real DATE columns (they were varchar)
+--   * `email` widened 40 -> 150 chars; UNIQUE key on `id_no`
+--     (an ID number must never repeat - the app also checks before insert)
+--   * NO personal data rows are included - the old dump shipped a real
+--     person's data. One clearly-fake demo row is provided (commented out).
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
+CREATE DATABASE IF NOT EXISTS `id_card` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE `id_card`;
 
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Database: `id_card`
---
-
--- --------------------------------------------------------
-
---
--- Table structure for table `cards`
---
-
-CREATE TABLE `cards` (
-  `sno` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `grade` varchar(10) DEFAULT NULL,
-  `id_no` varchar(15) DEFAULT NULL,
-  `email` varchar(40) DEFAULT NULL,
-  `phone` varchar(12) DEFAULT NULL,
+CREATE TABLE IF NOT EXISTS `cards` (
+  `sno` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL,
+  `grade` varchar(20) DEFAULT NULL,
+  `id_no` varchar(15) NOT NULL,
+  `email` varchar(150) DEFAULT NULL,
+  `phone` varchar(15) DEFAULT NULL,
   `address` varchar(100) DEFAULT NULL,
-  `dob` varchar(20) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
   `date` datetime NOT NULL DEFAULT current_timestamp(),
-  `exp_date` varchar(20) DEFAULT NULL,
-  `image` varchar(255) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+  `exp_date` date DEFAULT NULL,
+  `image` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`sno`),
+  UNIQUE KEY `id_no_unique` (`id_no`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Dumping data for table `cards`
---
-
-INSERT INTO `cards` (`sno`, `name`, `grade`, `id_no`, `email`, `phone`, `address`, `dob`, `date`, `exp_date`, `image`) VALUES
-(722, 'Rishika Biswas', NULL, '201302', 'rishi@gmail.com]', 'xxxxxxxxxx', 'Sector - 15, Noida', '2003-12-12', '2021-12-13 09:49:30', '2090-12-12', 'assets/uploads/images.jpg'),
-(723, 'Coding Cush', NULL, '234567890876', 'codingcush@gmail.com]', '0123456789', 'New Delhi, India', '2021-12-22', '2021-12-14 10:48:54', '2023-03-15', 'assets/uploads/1623328813617.png');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `cards`
---
-ALTER TABLE `cards`
-  ADD PRIMARY KEY (`sno`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `cards`
---
-ALTER TABLE `cards`
-  MODIFY `sno` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=724;
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+-- Optional demo row (fake data - safe to delete):
+-- INSERT INTO `cards` (`name`, `grade`, `id_no`, `email`, `phone`, `address`, `dob`, `exp_date`, `image`)
+-- VALUES ('Demo Student', '10th', '2026001', 'demo@example.com', '9876543210', 'New Delhi, India', '2010-05-14', '2027-03-31', 'assets/uploads/images.jpg');
